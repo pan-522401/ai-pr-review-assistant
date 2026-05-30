@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://localhost:8001';
 const STORAGE_KEY = 'ai-pr-review-history';
 
 const $ = (id) => document.getElementById(id);
@@ -62,6 +62,42 @@ async function loadHistoryFromServer() {
   }
 }
 
+function confidenceClass(score) {
+  if (score >= 90) return 'confidence-high';
+  if (score >= 70) return 'confidence-medium';
+  if (score >= 50) return 'confidence-low';
+  return 'confidence-info';
+}
+
+function confidenceLabel(score) {
+  if (score >= 90) return '高风险';
+  if (score >= 70) return '中等风险';
+  if (score >= 50) return '低风险';
+  return '仅供参考';
+}
+
+function renderItem(text, confidence) {
+  const cls = confidenceClass(confidence);
+  const label = confidenceLabel(confidence);
+  return `<span class="item-text">${text}</span>
+    <span class="confidence-badge ${cls}" title="置信度: ${confidence}% - ${label}">${confidence}%</span>`;
+}
+
+function renderList(el, items) {
+  el.innerHTML = '';
+  if (items && items.length) {
+    items.forEach((item) => {
+      const li = document.createElement('li');
+      if (typeof item === 'string') {
+        li.innerHTML = renderItem(item, 50);
+      } else {
+        li.innerHTML = renderItem(item.text, item.confidence);
+      }
+      el.appendChild(li);
+    });
+  }
+}
+
 async function displayResult(data) {
   show($('result-area'));
   hide($('placeholder'));
@@ -70,25 +106,8 @@ async function displayResult(data) {
   $('pr-meta').textContent = `${data.pr_url}  ·  ID: ${data.id}`;
   $('summary').textContent = data.summary;
 
-  const risksEl = $('risks-list');
-  risksEl.innerHTML = '';
-  if (data.risks && data.risks.length) {
-    data.risks.forEach((r) => {
-      const li = document.createElement('li');
-      li.textContent = r;
-      risksEl.appendChild(li);
-    });
-  }
-
-  const suggEl = $('suggestions-list');
-  suggEl.innerHTML = '';
-  if (data.suggestions && data.suggestions.length) {
-    data.suggestions.forEach((s) => {
-      const li = document.createElement('li');
-      li.textContent = s;
-      suggEl.appendChild(li);
-    });
-  }
+  renderList($('risks-list'), data.risks);
+  renderList($('suggestions-list'), data.suggestions);
 }
 
 async function handleAnalyze() {
@@ -133,7 +152,11 @@ async function handleAnalyze() {
   } catch (err) {
     hide($('loading'));
     show($('error'));
-    $('error').textContent = '错误：' + err.message;
+    if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
+      $('error').innerHTML = '❌ 无法连接后端，请确保后端服务已启动（端口 8001）';
+    } else {
+      $('error').textContent = '❌ ' + err.message;
+    }
   } finally {
     $('analyze-btn').disabled = false;
     $('analyze-btn').textContent = '分析';
@@ -152,25 +175,8 @@ function loadFromLocalHistory(index) {
     $('pr-meta').textContent = (item.url || item.pr_url) + '  ·  本地缓存';
     $('summary').textContent = item.summary || '';
 
-    const risksEl = $('risks-list');
-    risksEl.innerHTML = '';
-    if (item.data.risks && item.data.risks.length) {
-      item.data.risks.forEach((r) => {
-        const li = document.createElement('li');
-        li.textContent = r;
-        risksEl.appendChild(li);
-      });
-    }
-
-    const suggEl = $('suggestions-list');
-    suggEl.innerHTML = '';
-    if (item.data.suggestions && item.data.suggestions.length) {
-      item.data.suggestions.forEach((s) => {
-        const li = document.createElement('li');
-        li.textContent = s;
-        suggEl.appendChild(li);
-      });
-    }
+    renderList($('risks-list'), item.data.risks);
+    renderList($('suggestions-list'), item.data.suggestions);
   } else if (item.id) {
     loadDetailFromServer(item.id);
   }
@@ -195,7 +201,11 @@ async function loadDetailFromServer(id) {
   } catch (err) {
     hide($('loading'));
     show($('error'));
-    $('error').textContent = '错误：' + err.message;
+    if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
+      $('error').innerHTML = '❌ 无法连接后端，请确保后端服务已启动（端口 8001）';
+    } else {
+      $('error').textContent = '❌ ' + err.message;
+    }
   } finally {
     hide($('loading'));
   }
