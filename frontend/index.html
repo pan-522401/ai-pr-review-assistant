@@ -7,18 +7,36 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
   <header class="header">
-    <h1>AI PR Review Assistant</h1>
-    <p class="subtitle">智能代码审查 · 后端驱动版</p>
+    <div class="logo-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3c-1.5 0-3 .5-4 1.5S6 7 6 8.5c0 1.5.5 3 1.5 4S11 14.5 12 15c1 .5 2.5 1 3.5 2s1.5 2.5 1.5 4c0 1.5-.5 3-1.5 4S13.5 27 12 27"/>
+        <path d="M12 3v24"/>
+        <path d="M12 3c1.5 0 3 .5 4 1.5s2 2.5 2 4-.5 3-1.5 4S13 14.5 12 15"/>
+        <circle cx="12" cy="8" r="3"/>
+        <circle cx="12" cy="16" r="3"/>
+        <circle cx="12" cy="24" r="3"/>
+      </svg>
+    </div>
+    <h1>PR Review<span class="accent-dot">.</span></h1>
+    <p class="subtitle">智能代码审查 &middot; AI 驱动</p>
   </header>
 
   <main class="main">
     <section class="left-panel">
-      <div class="input-area">
-        <label for="pr-url">GitHub PR URL</label>
+      <div class="card glass input-area">
+        <label for="pr-url">GitHub Pull Request URL</label>
         <div class="input-row">
           <input type="url" id="pr-url" placeholder="https://github.com/facebook/react/pull/12345" autocomplete="url">
-          <button id="analyze-btn">分析</button>
+          <button id="analyze-btn">
+            <span class="btn-text">分析</span>
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+          </button>
         </div>
         <p id="error" class="error hidden"></p>
       </div>
@@ -27,32 +45,71 @@
         <div class="result-header">
           <span id="pr-meta" class="pr-meta"></span>
         </div>
-        <div class="result-section">
+        <div class="card glass result-section">
+          <div class="section-icon summary-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
           <h3>变更总结</h3>
           <p id="summary" class="summary-text"></p>
         </div>
-        <div class="result-section">
+        <div class="card glass result-section">
+          <div class="section-icon risk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
           <h3>风险代码</h3>
           <ul id="risks-list" class="risk-list"></ul>
         </div>
-        <div class="result-section">
+        <div class="card glass result-section">
+          <div class="section-icon suggestion-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              <line x1="9" y1="10" x2="15" y2="10"/>
+              <line x1="12" y1="7" x2="12" y2="13"/>
+            </svg>
+          </div>
           <h3>Review 建议</h3>
           <ul id="suggestions-list" class="suggestion-list"></ul>
         </div>
       </div>
 
-      <div id="loading" class="loading-card hidden">
-        <span class="spinner"></span>
+      <div id="loading" class="card glass loading-card hidden">
+        <div class="loader-ring">
+          <div></div><div></div><div></div><div></div>
+        </div>
         <span>正在分析 PR，请稍候...</span>
       </div>
 
-      <div id="placeholder" class="placeholder">
-        <p>输入 GitHub PR URL 并点击「分析」开始审查</p>
+      <div id="placeholder" class="card glass placeholder">
+        <div class="placeholder-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.4">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+        <p>输入 PR 链接，点击「分析」开始审查</p>
       </div>
     </section>
 
-    <aside class="right-panel">
-      <h2>历史记录</h2>
+    <aside class="right-panel card glass">
+      <div class="panel-header">
+        <div class="panel-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <h2>历史记录</h2>
+      </div>
       <ul id="history-list" class="history-list"></ul>
     </aside>
   </main>
