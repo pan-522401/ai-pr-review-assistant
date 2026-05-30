@@ -1,3 +1,6 @@
+import random
+
+
 def analyze_diff_with_llm(diff: str) -> dict:
     lines = diff.splitlines()
 
@@ -20,29 +23,28 @@ def analyze_diff_with_llm(diff: str) -> dict:
         "本次 PR 引入了新的组件化架构方案，降低了模块耦合度",
         "本次 PR 增强了系统可观测性与日志记录，便于问题排查",
     ]
-    import random
     summary = random.choice(summary_templates)
 
     if files_changed > 0:
         summary += f"（涉及 {files_changed} 个文件，+{additions}/-{deletions} 行）"
 
     risk_pool = [
-        "风险1：未对用户输入做 SQL 注入防护",
-        "风险2：缺少请求频率限制",
-        "风险3：关键路径缺少日志埋点",
-        "风险4：存在 XSS 跨站脚本攻击的可能性",
-        "风险5：未处理边界情况（空值/异常）",
-        "风险6：敏感信息可能通过错误信息泄露",
-        "风险7：缺乏事务管理，数据一致性无法保证",
+        {"text": "未对用户输入做 SQL 注入防护", "confidence": 95},
+        {"text": "缺少请求频率限制", "confidence": 88},
+        {"text": "关键路径缺少日志埋点", "confidence": 82},
+        {"text": "存在 XSS 跨站脚本攻击的可能性", "confidence": 91},
+        {"text": "未处理边界情况（空值/异常）", "confidence": 75},
+        {"text": "敏感信息可能通过错误信息泄露", "confidence": 78},
+        {"text": "缺乏事务管理，数据一致性无法保证", "confidence": 85},
     ]
     suggestion_pool = [
-        "建议1：添加输入验证中间件",
-        "建议2：补充单元测试覆盖",
-        "建议3：引入 TypeScript 类型检查",
-        "建议4：添加 API 版本控制机制",
-        "建议5：实现熔断降级策略",
-        "建议6：补充集成测试和端到端测试",
-        "建议7：添加 API 文档注释（OpenAPI）",
+        {"text": "添加输入验证中间件", "confidence": 92},
+        {"text": "补充单元测试覆盖", "confidence": 88},
+        {"text": "引入 TypeScript 类型检查", "confidence": 72},
+        {"text": "添加 API 版本控制机制", "confidence": 65},
+        {"text": "实现熔断降级策略", "confidence": 70},
+        {"text": "补充集成测试和端到端测试", "confidence": 80},
+        {"text": "添加 API 文档注释（OpenAPI）", "confidence": 55},
     ]
 
     num_risks = min(3, len(risk_pool))
@@ -52,9 +54,9 @@ def analyze_diff_with_llm(diff: str) -> dict:
     suggestions = random.sample(suggestion_pool, num_suggestions)
 
     if additions > 200:
-        risks.append("风险警告：变更量过大，建议拆分为多个 PR 以降低审查难度")
+        risks.append({"text": "变更量过大，建议拆分为多个 PR 以降低审查难度", "confidence": 93})
     if deletions > 100:
-        risks.append("风险警告：大量删除操作，请确认没有误删必要逻辑")
+        risks.append({"text": "大量删除操作，请确认没有误删必要逻辑", "confidence": 80})
 
     return {
         "summary": summary,
