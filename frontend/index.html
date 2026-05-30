@@ -1,63 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI PR Review Assistant</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>AI PR Review Assistant</h1>
-      <p class="subtitle">Automated pull request analysis powered by AI</p>
-    </header>
+  <header class="header">
+    <h1>AI PR Review Assistant</h1>
+    <p class="subtitle">智能代码审查 · 后端驱动版</p>
+  </header>
 
-    <section class="card input-card">
-      <div class="input-row">
-        <input
-          type="url"
-          id="prUrl"
-          placeholder="https://github.com/owner/repo/pull/123"
-          autocomplete="off"
-        />
-        <button id="submitBtn">Review</button>
-      </div>
-      <p id="error" class="error hidden"></p>
-    </section>
-
-    <section id="loading" class="card loading-card hidden">
-      <div class="spinner"></div>
-      <span>Analyzing PR, please wait...</span>
-    </section>
-
-    <section id="result" class="card result-card hidden">
-      <div class="result-header">
-        <h2>Review Result</h2>
-        <span id="prMeta" class="pr-meta"></span>
-      </div>
-      <div class="result-body">
-        <div class="section">
-          <h3>Summary</h3>
-          <p id="summary"></p>
+  <main class="main">
+    <section class="left-panel">
+      <div class="input-area">
+        <label for="pr-url">GitHub PR URL</label>
+        <div class="input-row">
+          <input type="url" id="pr-url" placeholder="https://github.com/facebook/react/pull/12345" autocomplete="url">
+          <button id="analyze-btn">分析</button>
         </div>
-        <div class="section">
-          <h3>Risks</h3>
-          <ul id="risks"></ul>
+        <p id="error" class="error hidden"></p>
+      </div>
+
+      <div id="result-area" class="result-area hidden">
+        <div class="result-header">
+          <span id="pr-meta" class="pr-meta"></span>
         </div>
-        <div class="section">
-          <h3>Suggestions</h3>
-          <ul id="suggestions"></ul>
+        <div class="result-section">
+          <h3>变更总结</h3>
+          <p id="summary" class="summary-text"></p>
+        </div>
+        <div class="result-section">
+          <h3>风险代码</h3>
+          <ul id="risks-list" class="risk-list"></ul>
+        </div>
+        <div class="result-section">
+          <h3>Review 建议</h3>
+          <ul id="suggestions-list" class="suggestion-list"></ul>
         </div>
       </div>
+
+      <div id="loading" class="loading-card hidden">
+        <span class="spinner"></span>
+        <span>正在分析 PR，请稍候...</span>
+      </div>
+
+      <div id="placeholder" class="placeholder">
+        <p>输入 GitHub PR URL 并点击「分析」开始审查</p>
+      </div>
     </section>
 
-    <section class="card history-card">
-      <h2>Review History</h2>
-      <ul id="historyList" class="history-list"></ul>
-      <p id="historyEmpty" class="empty-hint">No reviews yet.</p>
-    </section>
-  </div>
+    <aside class="right-panel">
+      <h2>历史记录</h2>
+      <ul id="history-list" class="history-list"></ul>
+    </aside>
+  </main>
 
   <script src="script.js"></script>
 </body>

@@ -1,1 +1,2 @@
-start frontend\index.html
+@echo off
+start "" "%~dp0frontend\index.html"
