@@ -6,6 +6,29 @@ const $ = (id) => document.getElementById(id);
 const show = (el) => el.classList.remove('hidden');
 const hide = (el) => el.classList.add('hidden');
 
+const CATEGORY_ICONS = {
+  security: '\u{1F512}',
+  performance: '\u26A1',
+  boundary: '\u{1F50D}',
+  logic: '\u{1F9E9}',
+  style: '\u{1F4DD}',
+  observability: '\u{1F4CA}',
+};
+
+const SEVERITY_LABELS = {
+  critical: '严重',
+  high: '高危',
+  medium: '中等',
+  low: '低风险',
+};
+
+const SEVERITY_CLASS = {
+  critical: 'severity-critical',
+  high: 'severity-high',
+  medium: 'severity-medium',
+  low: 'severity-low',
+};
+
 function getLocalHistory() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -76,11 +99,29 @@ function confidenceLabel(score) {
   return '仅供参考';
 }
 
-function renderItem(text, confidence) {
+function renderItem(item) {
+  const text = typeof item === 'string' ? item : item.text;
+  const confidence = typeof item === 'string' ? 50 : item.confidence;
   const cls = confidenceClass(confidence);
   const label = confidenceLabel(confidence);
-  return `<span class="item-text">${text}</span>
-    <span class="confidence-badge ${cls}" title="置信度: ${confidence}% - ${label}">${confidence}%</span>`;
+  const cat = item.category || '';
+  const icon = CATEGORY_ICONS[cat] || '';
+  const severity = item.severity || '';
+  const sevCls = SEVERITY_CLASS[severity] || '';
+  const sevLabel = SEVERITY_LABELS[severity] || '';
+  const reasoning = item.reasoning || '';
+
+  let topRow = `<span class="item-text">`;
+  if (icon) topRow += `<span class="category-icon" title="${cat}">${icon}</span>`;
+  topRow += `${text}</span>`;
+  topRow += `<span class="confidence-badge ${cls}" title="置信度: ${confidence}% - ${label}">${confidence}%</span>`;
+
+  let bottomRow = `<span class="item-meta">`;
+  if (sevCls) bottomRow += `<span class="severity-badge ${sevCls}">${sevLabel}</span>`;
+  if (reasoning) bottomRow += `<button class="reasoning-btn" data-reasoning="${reasoning.replace(/"/g, '&quot;')}" onclick="showReasoning(this.dataset.reasoning)">\u2753 为什么</button>`;
+  bottomRow += `</span>`;
+
+  return `<div class="item-content">${topRow}</div>${bottomRow ? `<div class="item-footer">${bottomRow}</div>` : ''}`;
 }
 
 function renderList(el, items) {
@@ -88,14 +129,23 @@ function renderList(el, items) {
   if (items && items.length) {
     items.forEach((item) => {
       const li = document.createElement('li');
-      if (typeof item === 'string') {
-        li.innerHTML = renderItem(item, 50);
-      } else {
-        li.innerHTML = renderItem(item.text, item.confidence);
-      }
+      li.innerHTML = renderItem(item);
       el.appendChild(li);
     });
   }
+}
+
+function showReasoning(text) {
+  const modal = $('reasoning-modal');
+  const content = $('reasoning-content');
+  if (!modal || !content) return;
+  content.textContent = text;
+  show(modal);
+}
+
+function closeReasoning() {
+  const modal = $('reasoning-modal');
+  if (modal) hide(modal);
 }
 
 async function displayResult(data) {
@@ -222,6 +272,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const li = e.target.closest('li');
     if (!li || li.dataset.index === undefined) return;
     loadFromLocalHistory(parseInt(li.dataset.index, 10));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal-overlay')) {
+      closeReasoning();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeReasoning();
   });
 
   loadHistoryFromServer().then(renderLocalHistory);
