@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI PR Review Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI PR Review Assistant</h1>
+      <p class="subtitle">Automated pull request analysis powered by AI</p>
+    </header>
+
+    <section class="card input-card">
+      <div class="input-row">
+        <input
+          type="url"
+          id="prUrl"
+          placeholder="https://github.com/owner/repo/pull/123"
+          autocomplete="off"
+        />
+        <button id="submitBtn">Review</button>
+      </div>
+      <p id="error" class="error hidden"></p>
+    </section>
+
+    <section id="loading" class="card loading-card hidden">
+      <div class="spinner"></div>
+      <span>Analyzing PR, please wait...</span>
+    </section>
+
+    <section id="result" class="card result-card hidden">
+      <div class="result-header">
+        <h2>Review Result</h2>
+        <span id="prMeta" class="pr-meta"></span>
+      </div>
+      <div class="result-body">
+        <div class="section">
+          <h3>Summary</h3>
+          <p id="summary"></p>
+        </div>
+        <div class="section">
+          <h3>Risks</h3>
+          <ul id="risks"></ul>
+        </div>
+        <div class="section">
+          <h3>Suggestions</h3>
+          <ul id="suggestions"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card history-card">
+      <h2>Review History</h2>
+      <ul id="historyList" class="history-list"></ul>
+      <p id="historyEmpty" class="empty-hint">No reviews yet.</p>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
