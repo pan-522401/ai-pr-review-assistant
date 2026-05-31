@@ -64,4 +64,4 @@ XEngineer 新工科计划 | 题目三：AI PR Review 助手 | 2026.05.29 - 2026.
 链接
 GitHub：https://github.com/pan-522401/ai-pr-review-assistant
 
-演示视频：https://app.clipchamp.com/consumer/editor?driveId=70DCAF6F560BD20A&folderId=70DCAF6F560BD20A!sffdd72ec5edd4a6cab52e74e63822645&itemId=70DCAF6F560BD20A!sa3711bca176946eebcb76689f5d72ec0
+演示视频： https://b23.tv/Ijwsq2e
