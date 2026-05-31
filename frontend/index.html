@@ -45,6 +45,20 @@
         <div class="result-header">
           <span id="pr-meta" class="pr-meta"></span>
         </div>
+<!-- PR 摘要卡片 -->
+<div id="summary-card" style="display: none; background: #1a1a2e; border-radius: 12px; padding: 15px; margin-bottom: 20px; border-left: 4px solid #00d4ff;">
+    <div style="font-size: 1.1em; font-weight: bold; margin-bottom: 10px; color: #00d4ff;">📊 PR 摘要</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 10px;">
+        <span>📁 文件：<span id="file-count">0</span> 个</span>
+        <span>➕ 新增：<span id="additions-count">0</span> 行</span>
+        <span>➖ 删除：<span id="deletions-count">0</span> 行</span>
+    </div>
+    <div id="risk-distribution" style="display: flex; gap: 15px; padding-top: 8px; border-top: 1px solid #333;">
+        <span class="risk-p0">🔴 P0: 0</span>
+        <span class="risk-p1">🟠 P1: 0</span>
+        <span class="risk-p2">⚪ P2: 0</span>
+    </div>
+</div>
         <div class="card glass result-section">
           <div class="section-icon summary-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

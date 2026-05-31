@@ -236,11 +236,14 @@ def analyze_diff(diff: str, context: dict | None = None) -> dict:
         result = caller(prompt)
         if result and "summary" in result:
             logger.info("使用 %s 完成分析", tier_name)
+            result["stats"] = {"file_count": files_changed, "additions": additions, "deletions": deletions}
             return result
         logger.warning("降级: %s 返回无效结果或不可用, 尝试下一级", tier_name)
 
     logger.info("所有 AI 服务不可用，使用模拟数据兜底")
-    return get_mock_data(context, files_changed, additions, deletions)
+    result = get_mock_data(context, files_changed, additions, deletions)
+    result["stats"] = {"file_count": files_changed, "additions": additions, "deletions": deletions}
+    return result
 
 
 # ── Backward compatibility alias ────────────────────────────

@@ -224,6 +224,35 @@ async function displayResult(data) {
   $('pr-meta').textContent = `${data.pr_url}  ·  ID: ${data.id}`;
   $('summary').textContent = data.summary;
 
+  // 显示摘要卡片
+  const summaryCard = $('summary-card');
+  if (data.stats && data.stats.file_count !== undefined) {
+    $('file-count').innerText = data.stats.file_count || 0;
+    $('additions-count').innerText = data.stats.additions || 0;
+    $('deletions-count').innerText = data.stats.deletions || 0;
+    summaryCard.style.display = 'block';
+  } else {
+    summaryCard.style.display = 'none';
+  }
+
+  // 统计风险分布
+  let p0=0, p1=0, p2=0;
+  if (data.risks && data.risks.length) {
+    data.risks.forEach(risk => {
+      let grade = 'P2';
+      if (risk.confidence >= 90 && risk.severity === 'critical') grade = 'P0';
+      else if (risk.confidence >= 70 && (risk.severity === 'high' || risk.severity === 'medium')) grade = 'P1';
+      if (grade === 'P0') p0++;
+      else if (grade === 'P1') p1++;
+      else p2++;
+    });
+    $('risk-distribution').innerHTML = `
+      <span class="risk-p0">🔴 P0: ${p0}</span>
+      <span class="risk-p1">🟠 P1: ${p1}</span>
+      <span class="risk-p2">⚪ P2: ${p2}</span>
+    `;
+  }
+
   renderList($('risks-list'), data.risks);
   renderList($('suggestions-list'), data.suggestions);
 }

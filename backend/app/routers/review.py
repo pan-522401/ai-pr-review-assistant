@@ -21,6 +21,7 @@ def create_review(req: ReviewRequest, db: Session = Depends(get_db)):
         summary=result["summary"],
         risks=json.dumps(result["risks"]),
         suggestions=json.dumps(result["suggestions"]),
+        stats=json.dumps(result.get("stats", {}), ensure_ascii=False),
         created_at=now_beijing,
     )
     db.add(record)
@@ -33,6 +34,7 @@ def create_review(req: ReviewRequest, db: Session = Depends(get_db)):
         summary=record.summary,
         risks=json.loads(record.risks or "[]"),
         suggestions=json.loads(record.suggestions or "[]"),
+        stats=json.loads(record.stats or "{}"),
         created_at=record.created_at,
     )
 
@@ -62,5 +64,6 @@ def get_review(review_id: int, db: Session = Depends(get_db)):
         summary=record.summary,
         risks=json.loads(record.risks or "[]"),
         suggestions=json.loads(record.suggestions or "[]"),
+        stats=json.loads(record.stats or "{}"),
         created_at=record.created_at,
     )

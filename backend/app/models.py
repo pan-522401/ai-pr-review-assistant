@@ -13,4 +13,5 @@ class Review(Base):
     summary = Column(Text, default="")
     risks = Column(Text, default="[]")
     suggestions = Column(Text, default="[]")
+    stats = Column(Text, default="{}")
     created_at = Column(DateTime, default=lambda: datetime.now(beijing_tz))
