@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
@@ -8,15 +9,19 @@ from app.services.review import perform_review
 
 router = APIRouter()
 
+beijing_tz = timezone(timedelta(hours=8))
+
 
 @router.post("/api/review", response_model=ReviewResponse)
 def create_review(req: ReviewRequest, db: Session = Depends(get_db)):
     result = perform_review(req.pr_url)
+    now_beijing = datetime.now(beijing_tz)
     record = Review(
         pr_url=req.pr_url,
         summary=result["summary"],
         risks=json.dumps(result["risks"]),
         suggestions=json.dumps(result["suggestions"]),
+        created_at=now_beijing,
     )
     db.add(record)
     db.commit()
