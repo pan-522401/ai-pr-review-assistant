@@ -7,7 +7,10 @@
 - 输入 GitHub PR 链接，自动获取代码变更
 - 生成变更总结（中文）
 - 识别风险代码，带置信度（0-100%）和严重度等级
-- 生成 Review 建议，带置信度
+- 风险分级：P0（必须修复）、P1（建议修复）、P2（可选优化）
+- 风险定位：显示具体文件名和行号
+- 一键复制为 GitHub 评论
+- PR 摘要卡片：文件数、新增/删除行数、风险分布
 - 历史记录 SQLite 存储，可追溯
 
 ## 技术架构
@@ -31,6 +34,7 @@
 - 每条风险带置信度
 - 颜色编码：90%+红(高危)、70-89%橙(中等)、50-69%黄(低风险)
 - 每条风险带判断依据（reasoning）
+- P0/P1/P2 分级，P0 高风险强制关注
 
 ## 使用方式
 
@@ -52,11 +56,12 @@ database/     # SQLite 数据库
 支持 GitLab、Gitee
 一键评论到 GitHub PR
 自定义规则配置
+PR 质量评分
 
 参赛信息
-XEngineer 新工科计划 | 题目三 | 2026.05.29-05.31
+XEngineer 新工科计划 | 题目三：AI PR Review 助手 | 2026.05.29 - 2026.05.31
 
 链接
-GitHub: https://github.com/pan-522401/ai-pr-review-assistant
-演示视频：待补充
+GitHub：https://github.com/pan-522401/ai-pr-review-assistant
 
+演示视频：待补充
