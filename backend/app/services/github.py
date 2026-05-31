@@ -1,7 +1,10 @@
 import os
 import re
+import urllib3
 import requests
 from typing import Tuple, Optional
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def parse_pr_url(url: str) -> Tuple[str, str, int]:
@@ -25,7 +28,7 @@ def get_pr_diff(owner: str, repo: str, pr_number: int) -> str:
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
     headers = _headers()
     headers["Accept"] = "application/vnd.github.v3.diff"
-    resp = requests.get(url, headers=headers)
+    resp = requests.get(url, headers=headers, verify=False)
     resp.raise_for_status()
     return resp.text
 
