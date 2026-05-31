@@ -106,6 +106,7 @@ def call_deepseek(prompt: str) -> dict | None:
             model=DEEPSEEK_MODEL,
             messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"},
+            temperature=0.3,
         )
         result = _try_parse_json(response.choices[0].message.content)
         if result:
@@ -131,6 +132,7 @@ def call_zhipu(prompt: str) -> dict | None:
         response = client.chat.completions.create(
             model=ZHIPU_MODEL,
             messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
         )
         raw_content = response.choices[0].message.content
         logger.info("智谱: 原始响应内容 (前200字符): %.200s", raw_content or "")
