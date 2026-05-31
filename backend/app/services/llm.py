@@ -20,19 +20,31 @@ CATEGORY_ICONS = {
     "observability": "\U0001f4ca",
 }
 
-PROMPT_TEMPLATE = """分析以下代码变更，返回 JSON 格式（不要有其他文字）：
+PROMPT_TEMPLATE = """请用中文分析以下代码变更，返回 JSON 格式（不要有其他文字）：
+
 {context_str}
+
 代码变更：
 {diff}
 
+要求：
+1. 返回 3 条风险（risks）
+2. 返回 3 条建议（suggestions）
+3. 每条风险包含：text, confidence(0-100), category, severity, reasoning
+4. 每条建议包含：text, confidence(0-100), category
+
 返回格式：
 {{
-    "summary": "一句话总结变更内容",
+    "summary": "一句话总结变更内容（中文）",
     "risks": [
-        {{"text": "风险描述", "confidence": 0-100整数, "category": "security/performance/boundary/logic/style/observability", "severity": "critical/high/medium/low", "reasoning": "判断依据"}}
+        {{"text": "风险描述", "confidence": 85, "category": "security", "severity": "high", "reasoning": "判断依据"}},
+        {{"text": "风险描述", "confidence": 70, "category": "performance", "severity": "medium", "reasoning": "判断依据"}},
+        {{"text": "风险描述", "confidence": 55, "category": "boundary", "severity": "low", "reasoning": "判断依据"}}
     ],
     "suggestions": [
-        {{"text": "建议描述", "confidence": 0-100整数, "category": "security/performance/boundary/logic/style/observability"}}
+        {{"text": "建议描述", "confidence": 90, "category": "security"}},
+        {{"text": "建议描述", "confidence": 80, "category": "performance"}},
+        {{"text": "建议描述", "confidence": 70, "category": "boundary"}}
     ]
 }}"""
 
