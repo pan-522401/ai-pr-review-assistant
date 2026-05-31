@@ -99,6 +99,12 @@ function confidenceLabel(score) {
   return '仅供参考';
 }
 
+function riskLevel(confidence, severity) {
+  if (confidence >= 90 && severity === 'critical') return { level: 'P0', label: '必须修复', cls: 'badge-p0' };
+  if (confidence >= 70 && (severity === 'high' || severity === 'medium')) return { level: 'P1', label: '建议修复', cls: 'badge-p1' };
+  return { level: 'P2', label: '可选优化', cls: 'badge-p2' };
+}
+
 function renderItem(item) {
   const text = typeof item === 'string' ? item : item.text;
   const confidence = typeof item === 'string' ? 50 : item.confidence;
@@ -111,28 +117,90 @@ function renderItem(item) {
   const sevLabel = SEVERITY_LABELS[severity] || '';
   const reasoning = item.reasoning || '';
 
-  let topRow = `<span class="item-text">`;
-  if (icon) topRow += `<span class="category-icon" title="${cat}">${icon}</span>`;
-  topRow += `${text}</span>`;
-  topRow += `<span class="confidence-badge ${cls}" title="置信度: ${confidence}% - ${label}">${confidence}%</span>`;
+  let html = `<div class="risk-text">`;
+  if (icon) html += `<span class="category-icon" title="${cat}">${icon}</span>`;
+  html += `${text}`;
+  html += `</div>`;
 
-  let bottomRow = `<span class="item-meta">`;
-  if (sevCls) bottomRow += `<span class="severity-badge ${sevCls}">${sevLabel}</span>`;
-  if (reasoning) bottomRow += `<button class="reasoning-btn" data-reasoning="${reasoning.replace(/"/g, '&quot;')}" onclick="showReasoning(this.dataset.reasoning)">\u2753 为什么</button>`;
-  bottomRow += `</span>`;
+  if (item.file && item.line) html += `<div class="risk-location">(${item.file}:${item.line})</div>`;
 
-  return `<div class="item-content">${topRow}</div>${bottomRow ? `<div class="item-footer">${bottomRow}</div>` : ''}`;
+  html += `<div class="risk-meta">`;
+
+  html += `<span class="risk-confidence confidence-badge ${cls}" title="置信度: ${confidence}% - ${label}">${confidence}%</span>`;
+
+  if (sevCls) html += `<span class="risk-severity severity-badge ${sevCls}">${sevLabel}</span>`;
+
+  if (item._type === 'risk') {
+    const rl = riskLevel(confidence, severity);
+    html += `<span class="${rl.cls}">${rl.level} ${rl.label}</span>`;
+  }
+
+  if (reasoning) html += `<button class="risk-reasoning-btn" data-reasoning="${reasoning.replace(/"/g, '&quot;')}" onclick="showReasoning(this.dataset.reasoning)">\u2753 为什么</button>`;
+
+  html += `<button class="copy-btn" onclick="copyItem(this)">\uD83D\uDCCB 复制</button>`;
+
+  html += `</div>`;
+
+  return html;
 }
 
 function renderList(el, items) {
   el.innerHTML = '';
   if (items && items.length) {
+    const type = el.id === 'risks-list' ? 'risk' : 'suggestion';
     items.forEach((item) => {
       const li = document.createElement('li');
+      li.className = 'risk-item';
+      item._type = type;
       li.innerHTML = renderItem(item);
       el.appendChild(li);
     });
   }
+}
+
+function copyItem(btn) {
+  const li = btn.closest('li');
+  const itemText = li.querySelector('.risk-text').textContent.trim();
+  const item = { text: itemText };
+
+  const badge = li.querySelector('.risk-confidence');
+  if (badge) item.confidence = parseInt(badge.textContent);
+
+  const sevBadge = li.querySelector('.risk-severity');
+  if (sevBadge) item.severity = sevBadge.textContent.trim();
+
+  const loc = li.querySelector('.file-location');
+  if (loc) {
+    const match = loc.textContent.match(/\((.+):(\d+)\)/);
+    if (match) { item.file = match[1]; item.line = match[2]; }
+  }
+
+  const reasoningBtn = li.querySelector('.risk-reasoning-btn');
+  if (reasoningBtn) item.reasoning = reasoningBtn.dataset.reasoning;
+
+  const isRisk = li.closest('#risks-list') !== null;
+  const label = isRisk ? '\uD83D\uDEA8 \u98CE\u9669\u95EE\u9898' : '\uD83D\uDCA1 \u6539\u8FDB\u5EFA\u8BAE';
+  let text = `---\n${label}\n${item.text}\n- \u7F6E\u4FE1\u5EA6\uFF1A${item.confidence}%\n`;
+  if (item.severity) text += `- \u4E25\u91CD\u5EA6\uFF1A${item.severity}\n`;
+  if (item.file) text += `- \u4F4D\u7F6E\uFF1A${item.file}:${item.line}\n`;
+  if (item.reasoning) text += `- \u5206\u6790\u4F9D\u636E\uFF1A${item.reasoning}\n`;
+  text += `---`;
+
+  navigator.clipboard.writeText(text).then(() => showCopyToast()).catch(() => {});
+}
+
+function showCopyToast() {
+  let toast = document.getElementById('copy-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'copy-toast';
+    toast.className = 'copy-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = '\u2714 \u5DF2\u590D\u5236\uFF0C\u53EF\u7C98\u8D34\u5230 GitHub PR \u8BC4\u8BBA';
+  toast.classList.add('show');
+  clearTimeout(toast._hide);
+  toast._hide = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
 function showReasoning(text) {

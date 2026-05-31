@@ -336,8 +336,10 @@ body {
 }
 
 .item-text {
-  flex: 1;
-  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .confidence-badge {
@@ -555,27 +557,114 @@ body {
   font-size: 14px;
 }
 
-/* Item layout */
-.item-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  width: 100%;
+/* ── 风险列表 ── */
+#risks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.item-footer {
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.risk-item {
+  display: block !important;
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
 }
 
-.item-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+.risk-text {
+  display: block !important;
+  margin-bottom: 8px;
+}
+
+.risk-location {
+  display: block !important;
+  font-size: 0.85em;
+  color: #aaa;
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+
+.badge-p0, .badge-p1, .badge-p2 {
+  display: inline-block;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.badge-p0 { color: #ff4444; }
+.badge-p1 { color: #ff8844; }
+.badge-p2 { color: #888888; }
+
+.risk-meta {
+  display: block !important;
+}
+
+.risk-meta span,
+.risk-meta button,
+.risk-confidence,
+.risk-severity,
+.badge-p0, .badge-p1, .badge-p2,
+.risk-reasoning-btn,
+.copy-btn {
+  display: inline-block !important;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.risk-confidence,
+.risk-severity {
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.risk-reasoning-btn,
+.copy-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #00d4ff;
+  font-size: 0.8em;
+  padding: 0 4px;
+}
+
+.risk-reasoning-btn:hover,
+.copy-btn:hover {
+  color: #ff8844;
+  text-decoration: underline;
+}
+
+.risk-reasoning-btn:hover,
+.copy-btn:hover {
+  color: #ff8844;
+  text-decoration: underline;
+  background: transparent;
+  border: none;
+}
+
+.copy-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-card);
+  border: 1px solid var(--success);
+  color: var(--success);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: all .3s ease;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.copy-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* Severity badge */
